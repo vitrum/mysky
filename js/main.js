@@ -1,4 +1,29 @@
 
+function obj2string(o){
+	var r=[];
+	if(typeof o=="string"){
+		return "\""+o.replace(/([\'\"\\])/g,"\\$1").replace(/(\n)/g,"\\n").replace(/(\r)/g,"\\r").replace(/(\t)/g,"\\t")+"\"";
+	}
+	if(typeof o=="object"){
+		if(!o.sort){
+			for(var i in o){
+				r.push(i+":"+obj2string(o[i]));
+			}
+			if(!!document.all&&!/^\n?function\s*toString\(\)\s*\{\n?\s*\[native code\]\n?\s*\}\n?\s*$/.test(o.toString)){
+				r.push("toString:"+o.toString.toString());
+			}
+			r="{"+r.join()+"}";
+		}else{
+			for(var i=0;i<o.length;i++){
+				r.push(obj2string(o[i]))
+			}
+			r="["+r.join()+"]";
+		} 
+		return r;
+	} 
+	return o.toString();
+}
+
 // Author : Thomas Boch
 var colorValues = ["#9bb2ff", "#9bb2ff", "#9eb5ff", "#a3b9ff", "#aabfff", "#b2c5ff", "#bbccff", "#c4d2ff", "#ccd8ff ", "#d3ddff", "#dae2ff", "#dfe5ff", "#e4e9ff", "#e9ecff", "#eeefff", "#f3f2ff", "#f8f6ff", "#fef9ff", "#fff9fb", "#fff7f5", "#fff5ef", "#fff3ea", "#fff1e5", "#ffefe0", "#ffeddb", "#ffebd6", "#ffe9d2", "#ffe8ce", "#ffe6ca", "#ffe5c6", "#ffe3c3", "#ffe2bf", "#ffe0bb", "#ffdfb8", "#ffddb4", "#ffdbb0", "#ffdaad", "#ffd8a9", "#ffd6a5", "#ffd5a1", "#ffd29c", "#ffd096", "#ffcc8f", "#ffc885", "#ffc178", "#ffb765", "#ffa94b", "#ff9523", "#ff7b00", "#ff5200"]
 var colorLimits = [-0.4, -0.35, -0.3, -0.25, -0.2, -0.15, -0.1, -0.05, 0, 0.05, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65, 0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1, 1.05, 1.1, 1.15, 1.2, 1.25, 1.3, 1.35, 1.4, 1.45, 1.5, 1.55, 1.6, 1.65, 1.7, 1.75, 1.8, 1.85, 1.9, 1.95, 2]
@@ -109,19 +134,45 @@ function sizeFromVMag(mag) {
 	    lon0 += xoffset*0.2;
 	    lat0 += yoffset*0.2;
 	};
-	var hammertime = Hammer(canvas).on("drag", function(event) {
-        alert(this, event);
+	Hammer(canvas).on("dragstart", function(event) {
+		event.gesture.preventDefault();
+		var g = event.gesture;
+	    dragx = g.center.pageX;
+	    dragy = g.center.pageY;
+	    dragging = true;
+	    intervalId = setInterval("doDraw()", intervalDelay);
+	    console.log("\ndragstart\ndragx:" + dragx + ",dragy:" + dragy);
     });
-	/*canvas.hammer().on("tap", function(event) {
-        console.log(this, event);
-        alert(this, event);
+    Hammer(canvas).on("dragend", function(event) {
+    	console.log("\ndragend\n dragx:" + dragx + ",dragy:" + dragy);
+	    dragx = dragy = null;	
+	    dragging = false;
+	    clearInterval(intervalId);
+	});
+	Hammer(canvas).on("drag", function(event) {
+		event.gesture.preventDefault();
+		var g = event.gesture;
+        //alert("event:" + obj2string(event));
+        //alert("point center:"+ obj2string(g.center) + "\n deltaX:" + g.deltaX + "\n deltaY:" + g.deltaY );
+        if (!dragging) return;
+
+	    var xoffset = g.deltaX-dragx;
+	    var yoffset = g.deltaY-dragy;
+	    var dist = xoffset*xoffset+yoffset*yoffset;
+	    if (dist<5) return;
+	    dragx = Math.round(g.deltaX);
+	    dragy = Math.round(g.deltaY);
+
+	    lon0 += xoffset*0.2;
+	    lat0 += yoffset*0.2;
+	    console.log("\ndrag\ndragx:" + dragx + ",dragy:" + dragy + ",xoffset" + xoffset + ",yoffset" + yoffset + ",lon0" + lon0);
     });
-*/
+
         width = canvas.width;
         height = canvas.height;
         cx = width/2;
         cy = height/2;
-	radius = 300;
+		radius = 320;
         if (canvas.getContext) {
             ctx = canvas.getContext("2d");
 	    doDraw();
