@@ -67,15 +67,14 @@
 
       var shapesLayer = new Kinetic.Layer();
 
-      /*
-       * create a group which will be used to combine
-       * multiple simple shapes.  Transforming the group will
-       * transform all of the simple shapes together as
-       * one unit
-       */
       var group = new Kinetic.Group({
         x: 220,
         y: 40,
+        rotationDeg: 20
+      });
+      var group2 = new Kinetic.Group({
+        x: 220,
+        y: 120,
         rotationDeg: 20
       });
 
@@ -85,36 +84,72 @@
         // anonymous function to induce scope
         (function() {
           var i = n;
-          var box = new Kinetic.Rect({
+          var box = new Kinetic.Circle({
             x: i * 30,
             y: i * 18,
-            width: 100,
-            height: 50,
+            radius: 2,
             name: colors[i],
-            fill: colors[i],
-            stroke: 'black',
-            strokeWidth: 4
+            fillRGB: {r:230,g:230,b:230},
+            shadowColorRGB: {r:255,g:255,b:255},
+            shadowBlur: 4,
+            //lineJoin:miter,
+            //stroke: 'black',
+            strokeWidth: 0
           });
 
           group.add(box);
         })();
       }
+      for(var n = 0; n < 3; n++) {
+        // anonymous function to induce scope
+        (function() {
+          var i = n;
+          var box = new Kinetic.Circle({
+            x: i * 30,
+            y: i * 18,
+            radius: 2,
+            name: colors[i],
+            fillRGB: {r:230,g:230,b:230},
+            shadowColorRGB: {r:255,g:255,b:255},
+            shadowBlur: 4,
+            //lineJoin:miter,
+            //stroke: 'black',
+            strokeWidth: 0
+          });
+
+          group2.add(box);
+        })();
+      }
 
       shapesLayer.add(group);
+      shapesLayer.add(group2);
       stage.add(shapesLayer);
 
       var amplitude = 150;
       var period = 2000;
       // in ms
-      var centerX = stage.getWidth() / 2;
+      var centerY = stage.getWidth() / 2;
 
       var anim = new Kinetic.Animation(function(frame) {
-        group.setX(amplitude * Math.sin(frame.time * 2 * Math.PI / period) + centerX);
+        group.setY(amplitude * Math.sin(frame.time * 2 * Math.PI / period) + centerY);
       }, shapesLayer);
 
-      anim.start();
+      //anim.start();
 
 
+var lineLayer = new Kinetic.Layer();
+// simple line
+var line = new Kinetic.Line({
+  x: 100,
+  y: 50,
+  points: [73, 70, 340, 23, 450, 60, 500, 20],
+  stroke: 'white',
+  opacity:0.4
+});
+
+      lineLayer.add(line);
+
+      stage.add(lineLayer);
     </script>
   </body>
 </html>
