@@ -1,9 +1,9 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0" />
-<meta name="apple-mobile-web-app-capable" content="yes" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <style>
       body {
         margin: 0px;
@@ -17,10 +17,25 @@
         top: 250px;
         left: 250px;
       }
+      #buttons {
+        position: absolute;
+        top: 5px;
+        left: 10px;
+      }
+      #buttons > input {
+        padding: 10px;
+        display: block;
+        margin-top: 5px;
+      }
     </style>
   </head>
   <body>
     <div id="container"></div>
+
+    <div id="buttons">
+      <input type="button" id="start" value="Start">
+      <input type="button" id="stop" value="Stop">
+    </div>
     <script src="js/kinetic.js"></script>
     <script defer="defer">
       var stage = new Kinetic.Stage({
@@ -144,7 +159,7 @@
       var anim = new Kinetic.Animation(function(frame) {
         var newYpoint= amplitude * Math.sin(frame.time * 2 * Math.PI / period) + centerY;
         group2.setY(newYpoint);
-        lineLayer.destroy();
+        lineLayer.remove();
         lineLayer = new Kinetic.Layer();
         // simple line
         var line = new Kinetic.Line({
@@ -161,7 +176,13 @@
 
       }, shapesLayer);
 
-      anim.start();
+      document.getElementById('start').addEventListener('click', function() {
+        anim.start();
+      }, false);
+      
+      document.getElementById('stop').addEventListener('click', function() {
+        anim.stop();
+      }, false);
 
 
     </script>
