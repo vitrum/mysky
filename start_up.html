@@ -68,8 +68,8 @@
       var shapesLayer = new Kinetic.Layer();
 
       var group = new Kinetic.Group({
-        x: 220,
-        y: 40,
+        x: 300,
+        y: 240,
         rotationDeg: 20
       });
       var group2 = new Kinetic.Group({
@@ -125,31 +125,45 @@
       shapesLayer.add(group2);
       stage.add(shapesLayer);
 
+
+
+
+
+
+
+
+
       var amplitude = 150;
       var period = 2000;
       // in ms
       var centerY = stage.getWidth() / 2;
 
+      var pointsNew = {};
+
+      var lineLayer = new Kinetic.Layer();
       var anim = new Kinetic.Animation(function(frame) {
-        group.setY(amplitude * Math.sin(frame.time * 2 * Math.PI / period) + centerY);
+        var newYpoint= amplitude * Math.sin(frame.time * 2 * Math.PI / period) + centerY;
+        group2.setY(newYpoint);
+        lineLayer.destroy();
+        lineLayer = new Kinetic.Layer();
+        // simple line
+        var line = new Kinetic.Line({
+          x: 0,
+          y: 0,
+          points: [73, 70, 340, newYpoint],
+          stroke: 'white',
+          opacity:0.4
+        });
+
+        lineLayer.add(line);
+        stage.add(lineLayer);
+        //console.log(newYpoint);
+
       }, shapesLayer);
 
-      //anim.start();
+      anim.start();
 
 
-var lineLayer = new Kinetic.Layer();
-// simple line
-var line = new Kinetic.Line({
-  x: 100,
-  y: 50,
-  points: [73, 70, 340, 23, 450, 60, 500, 20],
-  stroke: 'white',
-  opacity:0.4
-});
-
-      lineLayer.add(line);
-
-      stage.add(lineLayer);
     </script>
   </body>
 </html>

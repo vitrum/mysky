@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <style>
+
+      body {
+        margin: 0px;
+        padding: 0px;
+        background: url(image/hand_02.jpg) no-repeat;
+        position: relative;
+        min-height: 600px;
+}
+    </style>
+  </head>
+  <body>
+    <div id="container"></div>
+    <script src="js/kinetic.js"></script>
+    <script>
+      function loadImages(sources, callback) {
+        var images = {};
+        var loadedImages = 0;
+        var numImages = 0;
+        // get num of sources
+        for(var src in sources) {
+          numImages++;
+        }
+        for(var src in sources) {
+          images[src] = new Image();
+          images[src].onload = function() {
+            if(++loadedImages >= numImages) {
+              callback(images);
+            }
+          };
+          images[src].src = sources[src];
+        }
+      }
+      function draw(images) {
+        var stage = new Kinetic.Stage({
+          container: 'container',
+          width: 600,
+          height: 700
+        });
+        var layer = new Kinetic.Layer();
+
+        var patternPentagon = new Kinetic.RegularPolygon({
+          x: 220,
+          y: stage.getHeight() / 4,
+          sides: 6,
+          radius: 200,
+          fillPatternImage: images.yoda,
+          fillPatternOffset: [-220, 70],
+          stroke: 'black',
+          strokeWidth: 4,
+          draggable: true
+        });
+
+
+        patternPentagon.on('dragmove', function() {
+      	//this.setFillPatternImage(images.yoda);
+          //this.setFillPatternOffset(-100, 70);
+          var userPos = stage.getUserPosition();
+          this.setFillPatternOffset(-userPos.x,-userPos.y);
+          layer.draw();
+      		this.setX(220);
+      		this.setY(stage.getHeight() / 4);
+        });
+
+      
+        layer.add(patternPentagon);
+
+        stage.add(layer);
+      }
+      var sources = {
+        darthVader: 'http://www.html5canvastutorials.com/demos/assets/darth-vader.jpg',
+        yoda: 'http://www.html5canvastutorials.com/demos/assets/yoda.jpg'
+      };
+
+      loadImages(sources, function(images) {
+        draw(images);
+      });
+
+    </script>
+  </body>
+</html>
